@@ -20,7 +20,7 @@
 
 /* macros */
 
-#define IX(i,j) ((i)+(N+2)*(j))
+#define IX(i,j) ((i)+(N+2)*(j)) // Macro to convert 2D indices to 1D
 
 /* external definitions (from solver.c) */
 
@@ -29,18 +29,18 @@ extern void vel_step ( int N, float * u, float * v, float * u0, float * v0, floa
 
 /* global variables */
 
-static int N;
-static float dt, diff, visc;
-static float force, source;
-static int dvel;
+static int N; // Grid resolution
+static float dt, diff, visc; // Time step, diffusion rate, and viscosity
+static float force, source; // Force and source strength
+static int dvel; // Display velocity field if 1, otherwise display density field
 
-static float * u, * v, * u_prev, * v_prev;
-static float * dens, * dens_prev;
+static float * u, * v, * u_prev, * v_prev; // Velocity components and their previous states
+static float * dens, * dens_prev; // Density field and its previous state
 
-static int win_id;
-static int win_x, win_y;
-static int mouse_down[3];
-static int omx, omy, mx, my;
+static int win_id; // GLUT window identifier
+static int win_x, win_y; // Window dimensions
+static int mouse_down[3]; // Mouse button states
+static int omx, omy, mx, my; // Old and current mouse positions
 
 
 /*
@@ -49,7 +49,7 @@ static int omx, omy, mx, my;
   ----------------------------------------------------------------------
 */
 
-
+// Frees dynamically allocated data
 static void free_data ( void )
 {
 	if ( u ) free ( u );
@@ -60,6 +60,7 @@ static void free_data ( void )
 	if ( dens_prev ) free ( dens_prev );
 }
 
+// Clears simulation data to zero
 static void clear_data ( void )
 {
 	int i, size=(N+2)*(N+2);
@@ -69,6 +70,7 @@ static void clear_data ( void )
 	}
 }
 
+// Allocates memory for the simulation data
 static int allocate_data ( void )
 {
 	int size = (N+2)*(N+2);
@@ -95,6 +97,7 @@ static int allocate_data ( void )
   ----------------------------------------------------------------------
 */
 
+// Prepares the OpenGL viewport and projection matrix for rendering
 static void pre_display ( void )
 {
 	glViewport ( 0, 0, win_x, win_y );
@@ -105,11 +108,13 @@ static void pre_display ( void )
 	glClear ( GL_COLOR_BUFFER_BIT );
 }
 
+// Swaps the OpenGL buffers to display the rendered image
 static void post_display ( void )
 {
 	glutSwapBuffers ();
 }
 
+// Draws the velocity field as line segments
 static void draw_velocity ( void )
 {
 	int i, j;
@@ -135,6 +140,7 @@ static void draw_velocity ( void )
 	glEnd ();
 }
 
+// Draws the density field as gray-scale quads
 static void draw_density ( void )
 {
 	int i, j;
@@ -170,6 +176,7 @@ static void draw_density ( void )
   ----------------------------------------------------------------------
 */
 
+// Reads the mouse input and applies it to the velocity and density fields
 static void get_from_UI ( float * d, float * u, float * v )
 {
 	int i, j, size = (N+2)*(N+2);
@@ -355,8 +362,8 @@ int main ( int argc, char ** argv )
 	if ( !allocate_data () ) exit ( 1 );
 	clear_data ();
 
-	win_x = 512;
-	win_y = 512;
+	win_x = 1600;
+	win_y = 900;
 	open_glut_window ();
 
 	glutMainLoop ();
