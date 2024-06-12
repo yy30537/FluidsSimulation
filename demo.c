@@ -25,7 +25,7 @@
 /* external definitions (from solver.c) */
 
 extern void dens_step ( int N, float * x, float * x0, float * u, float * v, float diff, float dt );
-extern void vel_step ( int N, float * u, float * v, float * u0, float * v0, float visc, float dt );
+extern void vel_step ( int N, float * u, float * v, float * u0, float * v0, float visc, float dt, float epsilon );
 
 /* global variables */
 
@@ -34,6 +34,8 @@ static float dt, diff, visc; // Time step, diffusion rate, and viscosity
 static float force, source; // Force and source strength
 static int dvel; // Display velocity field if 1, otherwise display density field
 
+static int vorticity_enabled = 1; // Toggle vorticity
+
 static float * u, * v, * u_prev, * v_prev; // Velocity components and their previous states
 static float * dens, * dens_prev; // Density field and its previous state
 
@@ -41,6 +43,8 @@ static int win_id; // GLUT window identifier
 static int win_x, win_y; // Window dimensions
 static int mouse_down[3]; // Mouse button states
 static int omx, omy, mx, my; // Old and current mouse positions
+
+static float epsilon = 0.1f; // Vorticity confinement parameter
 
 
 /*
@@ -97,6 +101,15 @@ static int allocate_data ( void )
   ----------------------------------------------------------------------
 */
 
+// Maps a density value to a color
+void dens_to_color(float d, float *r, float *g, float *b) {
+    *r = d;      // Red increases with density
+    *g = 0.0f;   // Green remains constant
+    *b = 1.0f - d; // Blue decreases with density
+}
+
+
+
 // Prepares the OpenGL viewport and projection matrix for rendering
 static void pre_display ( void )
 {
@@ -143,32 +156,39 @@ static void draw_velocity ( void )
 // Draws the density field as gray-scale quads
 static void draw_density ( void )
 {
-	int i, j;
-	float x, y, h, d00, d01, d10, d11;
+    int i, j;
+    float x, y, h, d00, d01, d10, d11;
+    float r, g, b;
 
-	h = 1.0f/N;
+    h = 1.0f/N;
 
-	glBegin ( GL_QUADS );
+    glBegin ( GL_QUADS );
 
-		for ( i=0 ; i<=N ; i++ ) {
-			x = (i-0.5f)*h;
-			for ( j=0 ; j<=N ; j++ ) {
-				y = (j-0.5f)*h;
+        for ( i=0 ; i<=N ; i++ ) {
+            x = (i-0.5f)*h;
+            for ( j=0 ; j<=N ; j++ ) {
+                y = (j-0.5f)*h;
 
-				d00 = dens[IX(i,j)];
-				d01 = dens[IX(i,j+1)];
-				d10 = dens[IX(i+1,j)];
-				d11 = dens[IX(i+1,j+1)];
+                d00 = dens[IX(i,j)];
+                d01 = dens[IX(i,j+1)];
+                d10 = dens[IX(i+1,j)];
+                d11 = dens[IX(i+1,j+1)];
 
-				glColor3f ( d00, d00, d00 ); glVertex2f ( x, y );
-				glColor3f ( d10, d10, d10 ); glVertex2f ( x+h, y );
-				glColor3f ( d11, d11, d11 ); glVertex2f ( x+h, y+h );
-				glColor3f ( d01, d01, d01 ); glVertex2f ( x, y+h );
-			}
-		}
+                dens_to_color(d00, &r, &g, &b);
+                glColor3f(r, g, b); glVertex2f ( x, y );
+                dens_to_color(d10, &r, &g, &b);
+                glColor3f(r, g, b); glVertex2f ( x+h, y );
+                dens_to_color(d11, &r, &g, &b);
+                glColor3f(r, g, b); glVertex2f ( x+h, y+h );
+                dens_to_color(d01, &r, &g, &b);
+                glColor3f(r, g, b); glVertex2f ( x, y+h );
+            }
+        }
 
-	glEnd ();
+    glEnd ();
 }
+
+
 
 /*
   ----------------------------------------------------------------------
@@ -232,6 +252,11 @@ static void key_func ( unsigned char key, int x, int y )
 		case 'V':
 			dvel = !dvel;
 			break;
+
+		case '1':
+			vorticity_enabled = !vorticity_enabled;
+			printf("Vorticity confinement %s\n", vorticity_enabled ? "enabled" : "disabled");
+			break;
 	}
 }
 
@@ -258,14 +283,13 @@ static void reshape_func ( int width, int height )
 	win_y = height;
 }
 
-static void idle_func ( void )
-{
-	get_from_UI ( dens_prev, u_prev, v_prev );
-	vel_step ( N, u, v, u_prev, v_prev, visc, dt );
-	dens_step ( N, dens, dens_prev, u, v, diff, dt );
+void idle_func(void) {
+    get_from_UI(dens_prev, u_prev, v_prev);
+    vel_step(N, u, v, u_prev, v_prev, visc, dt, vorticity_enabled ? epsilon : 0); // Pass epsilon or 0 based on vorticity toggle
+    dens_step(N, dens, dens_prev, u, v, diff, dt);
 
-	glutSetWindow ( win_id );
-	glutPostRedisplay ();
+    glutSetWindow(win_id);
+    glutPostRedisplay();
 }
 
 static void display_func ( void )
@@ -362,11 +386,12 @@ int main ( int argc, char ** argv )
 	if ( !allocate_data () ) exit ( 1 );
 	clear_data ();
 
-	win_x = 1600;
-	win_y = 900;
+	win_x = 600;
+	win_y = 600;
 	open_glut_window ();
 
 	glutMainLoop ();
 
 	exit ( 0 );
 }
+
