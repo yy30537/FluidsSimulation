@@ -28,14 +28,14 @@ void set_bnd(int N, int b, float *x) {
     int hole_center_x = (N + 2) / 2;
     int hole_center_y = (N + 2) / 2;
 
-    for (i = 1; i <= N; i++) {
-        for (j = 1; j <= N; j++) {
-            // Create a vertical wall in the middle except for the hole
-            if (i == hole_center_x && abs(j - hole_center_y) > hole_radius) {
-                x[IX(i, j)] = 0; // Wall
-            }
-        }
-    }
+    // for (i = 1; i <= N; i++) {
+    //     for (j = 1; j <= N; j++) {
+    //         // Create a vertical wall in the middle except for the hole
+    //         if (i == hole_center_x && abs(j - hole_center_y) > hole_radius) {
+    //             x[IX(i, j)] = 0; // Wall
+    //         }
+    //     }
+    // }
 
     for (i = 1; i <= N; i++) {
         x[IX(0, i)] = b == 1 ? -x[IX(1, i)] : x[IX(1, i)]; // Left boundary
