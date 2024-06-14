@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <GL/glut.h>
+#include "bound.h"
 
 /* macros */
 
@@ -24,8 +25,8 @@
 
 /* external definitions (from solver.c) */
 
-extern void dens_step ( int N, float * x, float * x0, float * u, float * v, float diff, float dt );
-extern void vel_step ( int N, float * u, float * v, float * u0, float * v0, float visc, float dt, float epsilon );
+extern void dens_step ( int N, float * x, float * x0, float * u, float * v, float diff, float dt, BoundaryCells *cells );
+extern void vel_step ( int N, float * u, float * v, float * u0, float * v0, float visc, float dt, float epsilon, BoundaryCells *cells );
 
 /* global variables */
 
@@ -34,7 +35,10 @@ static float dt, diff, visc; // Time step, diffusion rate, and viscosity
 static float force, source; // Force and source strength
 static int dvel; // Display velocity field if 1, otherwise display density field
 
-static int vorticity_enabled = 1; // Toggle vorticity
+static int vorticity_enabled = 0; // Toggle vorticity
+static int fixed_objects_enabled = 0; // Toggle fixed objects
+static BoundaryCells cells;
+
 
 static float * u, * v, * u_prev, * v_prev; // Velocity components and their previous states
 static float * dens, * dens_prev; // Density field and its previous state
@@ -56,22 +60,25 @@ static float epsilon = 0.1f; // Vorticity confinement parameter
 // Frees dynamically allocated data
 static void free_data ( void )
 {
-	if ( u ) free ( u );
-	if ( v ) free ( v );
-	if ( u_prev ) free ( u_prev );
-	if ( v_prev ) free ( v_prev );
-	if ( dens ) free ( dens );
-	if ( dens_prev ) free ( dens_prev );
+    if ( u ) free ( u );
+    if ( v ) free ( v );
+    if ( u_prev ) free ( u_prev );
+    if ( v_prev ) free ( v_prev );
+    if ( dens ) free ( dens );
+    if ( dens_prev ) free ( dens_prev );
+    free_boundary_cells(&cells);
 }
 
 // Clears simulation data to zero
 static void clear_data ( void )
 {
-	int i, size=(N+2)*(N+2);
+    int i, size=(N+2)*(N+2);
 
-	for ( i=0 ; i<size ; i++ ) {
-		u[i] = v[i] = u_prev[i] = v_prev[i] = dens[i] = dens_prev[i] = 0.0f;
-	}
+    for ( i=0 ; i<size ; i++ ) {
+        u[i] = v[i] = u_prev[i] = v_prev[i] = dens[i] = dens_prev[i] = 0.0f;
+    }
+    free_boundary_cells(&cells);
+    init_boundary_cells(&cells, N);
 }
 
 // Allocates memory for the simulation data
@@ -85,6 +92,8 @@ static int allocate_data ( void )
 	v_prev		= (float *) malloc ( size*sizeof(float) );
 	dens		= (float *) malloc ( size*sizeof(float) );	
 	dens_prev	= (float *) malloc ( size*sizeof(float) );
+
+	init_boundary_cells(&cells, N);
 
 	if ( !u || !v || !u_prev || !v_prev || !dens || !dens_prev ) {
 		fprintf ( stderr, "cannot allocate data\n" );
@@ -169,24 +178,34 @@ static void draw_density ( void )
             for ( j=0 ; j<=N ; j++ ) {
                 y = (j-0.5f)*h;
 
-                d00 = dens[IX(i,j)];
-                d01 = dens[IX(i,j+1)];
-                d10 = dens[IX(i+1,j)];
-                d11 = dens[IX(i+1,j+1)];
+                if (cells.fixed_cells[IX(i,j)]) {
+                    // Draw white quads for marked boundaries
+                    glColor3f(1.0f, 1.0f, 1.0f); glVertex2f ( x, y );
+                    glVertex2f ( x+h, y );
+                    glVertex2f ( x+h, y+h );
+                    glVertex2f ( x, y+h );
+                } else {
+                    // Normal density drawing
+                    d00 = dens[IX(i,j)];
+                    d01 = dens[IX(i,j+1)];
+                    d10 = dens[IX(i+1,j)];
+                    d11 = dens[IX(i+1,j+1)];
 
-                dens_to_color(d00, &r, &g, &b);
-                glColor3f(r, g, b); glVertex2f ( x, y );
-                dens_to_color(d10, &r, &g, &b);
-                glColor3f(r, g, b); glVertex2f ( x+h, y );
-                dens_to_color(d11, &r, &g, &b);
-                glColor3f(r, g, b); glVertex2f ( x+h, y+h );
-                dens_to_color(d01, &r, &g, &b);
-                glColor3f(r, g, b); glVertex2f ( x, y+h );
+                    dens_to_color(d00, &r, &g, &b);
+                    glColor3f(r, g, b); glVertex2f ( x, y );
+                    dens_to_color(d10, &r, &g, &b);
+                    glColor3f(r, g, b); glVertex2f ( x+h, y );
+                    dens_to_color(d11, &r, &g, &b);
+                    glColor3f(r, g, b); glVertex2f ( x+h, y+h );
+                    dens_to_color(d01, &r, &g, &b);
+                    glColor3f(r, g, b); glVertex2f ( x, y+h );
+                }
             }
         }
 
     glEnd ();
 }
+
 
 
 
@@ -199,33 +218,38 @@ static void draw_density ( void )
 // Reads the mouse input and applies it to the velocity and density fields
 static void get_from_UI ( float * d, float * u, float * v )
 {
-	int i, j, size = (N+2)*(N+2);
+    int i, j, size = (N+2)*(N+2);
 
-	for ( i=0 ; i<size ; i++ ) {
-		u[i] = v[i] = d[i] = 0.0f;
-	}
+    for ( i=0 ; i<size ; i++ ) {
+        u[i] = v[i] = d[i] = 0.0f;
+    }
 
-	if ( !mouse_down[0] && !mouse_down[2] ) return;
+    if ( !mouse_down[0] && !mouse_down[2] ) return;
 
-	i = (int)((       mx /(float)win_x)*N+1);
-	j = (int)(((win_y-my)/(float)win_y)*N+1);
+    i = (int)((       mx /(float)win_x)*N+1);
+    j = (int)(((win_y-my)/(float)win_y)*N+1);
 
-	if ( i<1 || i>N || j<1 || j>N ) return;
+    if ( i<1 || i>N || j<1 || j>N ) return;
 
-	if ( mouse_down[0] ) {
-		u[IX(i,j)] = force * (mx-omx);
-		v[IX(i,j)] = force * (omy-my);
-	}
+    if (fixed_objects_enabled) {
+        set_fixed_cell(&cells, N, i, j);
+    } else {
+        if ( mouse_down[0] ) {
+            u[IX(i,j)] = force * (mx-omx);
+            v[IX(i,j)] = force * (omy-my);
+        }
 
-	if ( mouse_down[2] ) {
-		d[IX(i,j)] = source;
-	}
+        if ( mouse_down[2] ) {
+            d[IX(i,j)] = source;
+        }
+    }
 
-	omx = mx;
-	omy = my;
+    omx = mx;
+    omy = my;
 
-	return;
+    return;
 }
+
 
 /*
   ----------------------------------------------------------------------
@@ -235,58 +259,62 @@ static void get_from_UI ( float * d, float * u, float * v )
 
 static void key_func ( unsigned char key, int x, int y )
 {
-	switch ( key )
-	{
-		case 'c':
-		case 'C':
-			clear_data ();
-			break;
+    switch ( key )
+    {
+        case 'c':
+        case 'C':
+            clear_data ();
+            break;
 
-		case 'q':
-		case 'Q':
-			free_data ();
-			exit ( 0 );
-			break;
+        case 'q':
+        case 'Q':
+            free_data ();
+            exit ( 0 );
+            break;
 
-		case 'v':
-		case 'V':
-			dvel = !dvel;
-			break;
+        case 'v':
+        case 'V':
+            dvel = !dvel;
+            break;
 
-		case '1':
-			vorticity_enabled = !vorticity_enabled;
-			printf("Vorticity confinement %s\n", vorticity_enabled ? "enabled" : "disabled");
-			break;
-	}
+        case '1':
+            vorticity_enabled = !vorticity_enabled;
+            printf("Feature 1: Vorticity confinement %s\n", vorticity_enabled ? "enabled" : "disabled");
+            break;
+        case '2':
+            fixed_objects_enabled = !fixed_objects_enabled;
+            printf("Feature 2: Fixed objects marking %s\n", fixed_objects_enabled ? "enabled" : "disabled");
+            break;
+    }
 }
 
 static void mouse_func ( int button, int state, int x, int y )
 {
-	omx = mx = x;
-	omx = my = y;
+    omx = mx = x;
+    omx = my = y;
 
-	mouse_down[button] = state == GLUT_DOWN;
+    mouse_down[button] = state == GLUT_DOWN;
 }
 
 static void motion_func ( int x, int y )
 {
-	mx = x;
-	my = y;
+    mx = x;
+    my = y;
 }
 
 static void reshape_func ( int width, int height )
 {
-	glutSetWindow ( win_id );
-	glutReshapeWindow ( width, height );
+    glutSetWindow ( win_id );
+    glutReshapeWindow ( width, height );
 
-	win_x = width;
-	win_y = height;
+    win_x = width;
+    win_y = height;
 }
 
 void idle_func(void) {
     get_from_UI(dens_prev, u_prev, v_prev);
-    vel_step(N, u, v, u_prev, v_prev, visc, dt, vorticity_enabled ? epsilon : 0); // Pass epsilon or 0 based on vorticity toggle
-    dens_step(N, dens, dens_prev, u, v, diff, dt);
+    vel_step(N, u, v, u_prev, v_prev, visc, dt, vorticity_enabled ? epsilon : 0, &cells); // Pass epsilon or 0 based on vorticity toggle
+    dens_step(N, dens, dens_prev, u, v, diff, dt, &cells);
 
     glutSetWindow(win_id);
     glutPostRedisplay();
@@ -294,12 +322,12 @@ void idle_func(void) {
 
 static void display_func ( void )
 {
-	pre_display ();
+    pre_display ();
 
-		if ( dvel ) draw_velocity ();
-		else		draw_density ();
+        if ( dvel ) draw_velocity ();
+        else        draw_density ();
 
-	post_display ();
+    post_display ();
 }
 
 
@@ -311,26 +339,26 @@ static void display_func ( void )
 
 static void open_glut_window ( void )
 {
-	glutInitDisplayMode ( GLUT_RGBA | GLUT_DOUBLE );
+    glutInitDisplayMode ( GLUT_RGBA | GLUT_DOUBLE );
 
-	glutInitWindowPosition ( 0, 0 );
-	glutInitWindowSize ( win_x, win_y );
-	win_id = glutCreateWindow ( "Alias | wavefront" );
+    glutInitWindowPosition ( 0, 0 );
+    glutInitWindowSize ( win_x, win_y );
+    win_id = glutCreateWindow ( "Alias | wavefront" );
 
-	glClearColor ( 0.0f, 0.0f, 0.0f, 1.0f );
-	glClear ( GL_COLOR_BUFFER_BIT );
-	glutSwapBuffers ();
-	glClear ( GL_COLOR_BUFFER_BIT );
-	glutSwapBuffers ();
+    glClearColor ( 0.0f, 0.0f, 0.0f, 1.0f );
+    glClear ( GL_COLOR_BUFFER_BIT );
+    glutSwapBuffers ();
+    glClear ( GL_COLOR_BUFFER_BIT );
+    glutSwapBuffers ();
 
-	pre_display ();
+    pre_display ();
 
-	glutKeyboardFunc ( key_func );
-	glutMouseFunc ( mouse_func );
-	glutMotionFunc ( motion_func );
-	glutReshapeFunc ( reshape_func );
-	glutIdleFunc ( idle_func );
-	glutDisplayFunc ( display_func );
+    glutKeyboardFunc ( key_func );
+    glutMouseFunc ( mouse_func );
+    glutMotionFunc ( motion_func );
+    glutReshapeFunc ( reshape_func );
+    glutIdleFunc ( idle_func );
+    glutDisplayFunc ( display_func );
 }
 
 
@@ -342,56 +370,60 @@ static void open_glut_window ( void )
 
 int main ( int argc, char ** argv )
 {
-	glutInit ( &argc, argv );
+    glutInit ( &argc, argv );
 
-	if ( argc != 1 && argc != 6 ) {
-		fprintf ( stderr, "usage : %s N dt diff visc force source\n", argv[0] );
-		fprintf ( stderr, "where:\n" );\
-		fprintf ( stderr, "\t N      : grid resolution\n" );
-		fprintf ( stderr, "\t dt     : time step\n" );
-		fprintf ( stderr, "\t diff   : diffusion rate of the density\n" );
-		fprintf ( stderr, "\t visc   : viscosity of the fluid\n" );
-		fprintf ( stderr, "\t force  : scales the mouse movement that generate a force\n" );
-		fprintf ( stderr, "\t source : amount of density that will be deposited\n" );
-		exit ( 1 );
-	}
+    if ( argc != 1 && argc != 6 ) {
+        fprintf ( stderr, "usage : %s N dt diff visc force source\n", argv[0] );
+        fprintf ( stderr, "where:\n" );\
+        fprintf ( stderr, "\t N      : grid resolution\n" );
+        fprintf ( stderr, "\t dt     : time step\n" );
+        fprintf ( stderr, "\t diff   : diffusion rate of the density\n" );
+        fprintf ( stderr, "\t visc   : viscosity of the fluid\n" );
+        fprintf ( stderr, "\t force  : scales the mouse movement that generate a force\n" );
+        fprintf ( stderr, "\t source : amount of density that will be deposited\n" );
+        exit ( 1 );
+    }
 
-	if ( argc == 1 ) {
-		N = 64;
-		dt = 0.1f;
-		diff = 0.0f;
-		visc = 0.0f;
-		force = 5.0f;
-		source = 100.0f;
-		fprintf ( stderr, "Using defaults : N=%d dt=%g diff=%g visc=%g force = %g source=%g\n",
-			N, dt, diff, visc, force, source );
-	} else {
-		N = atoi(argv[1]);
-		dt = atof(argv[2]);
-		diff = atof(argv[3]);
-		visc = atof(argv[4]);
-		force = atof(argv[5]);
-		source = atof(argv[6]);
-	}
+    if ( argc == 1 ) {
+        N = 64;
+        dt = 0.1f;
+        diff = 0.0f;
+        visc = 0.0f;
+        force = 5.0f;
+        source = 100.0f;
+        fprintf ( stderr, "Using defaults : N=%d dt=%g diff=%g visc=%g force = %g source=%g\n",
+            N, dt, diff, visc, force, source );
+    } else {
+        N = atoi(argv[1]);
+        dt = atof(argv[2]);
+        diff = atof(argv[3]);
+        visc = atof(argv[4]);
+        force = atof(argv[5]);
+        source = atof(argv[6]);
+    }
 
-	printf ( "\n\nHow to use this demo:\n\n" );
-	printf ( "\t Add densities with the right mouse button\n" );
-	printf ( "\t Add velocities with the left mouse button and dragging the mouse\n" );
-	printf ( "\t Toggle density/velocity display with the 'v' key\n" );
-	printf ( "\t Clear the simulation by pressing the 'c' key\n" );
-	printf ( "\t Quit by pressing the 'q' key\n" );
+    printf ( "\n\nHow to use this demo:\n\n" );
+    printf ( "\t Add densities with the right mouse button\n" );
+    printf ( "\t Add velocities with the left mouse button and dragging the mouse\n" );
+    printf ( "\t Toggle density/velocity display with the 'v' key\n" );
+    printf ( "\t Clear the simulation by pressing the 'c' key\n" );
+    printf ( "\t Quit by pressing the 'q' key\n" );
+    printf ( "\t Toggle vorticity confinement by pressing the '1' key\n" );
+    printf ( "\t Toggle fixed objects marking by pressing the '2' key\n" );
 
-	dvel = 0;
+    dvel = 0;
 
-	if ( !allocate_data () ) exit ( 1 );
-	clear_data ();
+    vorticity_enabled = 0; 
+    fixed_objects_enabled = 0; 
 
-	win_x = 600;
-	win_y = 600;
-	open_glut_window ();
+    if ( !allocate_data () ) exit ( 1 );
+    clear_data ();
 
-	glutMainLoop ();
+    win_x = 600;
+    win_y = 600;
+    open_glut_window ();
 
-	exit ( 0 );
+    glutMainLoop ();
+
+    exit ( 0 );
 }
-
