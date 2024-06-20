@@ -24,9 +24,9 @@ void add_source ( int N, float * x, float * s, float dt )
 // Sets the boundary conditions. This ensures the fluid does not leak out of the container.
 void set_bnd(int N, int b, float *x) {
     int i, j;
-    int hole_radius = N / 10; // Adjust the size of the hole
-    int hole_center_x = (N + 2) / 2;
-    int hole_center_y = (N + 2) / 2;
+    // int hole_radius = N / 10; // Adjust the size of the hole
+    // int hole_center_x = (N + 2) / 2;
+    // int hole_center_y = (N + 2) / 2;
 
     // for (i = 1; i <= N; i++) {
     //     for (j = 1; j <= N; j++) {

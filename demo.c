@@ -17,6 +17,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <GL/glut.h>
+#include <string.h>
+#include <stdbool.h>
 
 /* macros */
 
@@ -44,7 +46,7 @@ static int win_x, win_y; // Window dimensions
 static int mouse_down[3]; // Mouse button states
 static int omx, omy, mx, my; // Old and current mouse positions
 
-static float epsilon = 0.1f; // Vorticity confinement parameter
+static float epsilon = 5.0f; // Vorticity confinement parameter
 
 
 /*
@@ -257,6 +259,15 @@ static void key_func ( unsigned char key, int x, int y )
 			vorticity_enabled = !vorticity_enabled;
 			printf("Vorticity confinement %s\n", vorticity_enabled ? "enabled" : "disabled");
 			break;
+
+		// case '2':
+        //     if (!get_is_marking_mode()) {
+        //         set_is_marking_mode(true);
+        //     } else {
+        //         set_is_marking_mode(false);
+        //         finalize_fixed_objects(N);
+        //     }
+        //     break;
 	}
 }
 
@@ -266,6 +277,15 @@ static void mouse_func ( int button, int state, int x, int y )
 	omx = my = y;
 
 	mouse_down[button] = state == GLUT_DOWN;
+
+    if (button == 3) { // Scroll up
+        epsilon += 0.1f;
+        printf("Epsilon increased to %f\n", epsilon);
+    } else if (button == 4) { // Scroll down
+        epsilon -= 0.1f;
+        if (epsilon < 0) epsilon = 0; // Ensure epsilon doesn't go negative
+        printf("Epsilon decreased to %f\n", epsilon);
+    }
 }
 
 static void motion_func ( int x, int y )
@@ -394,4 +414,3 @@ int main ( int argc, char ** argv )
 
 	exit ( 0 );
 }
-
