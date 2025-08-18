@@ -1,0 +1,107 @@
+# Unreal Engine
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+.vs/
+.vscode/
+*.VC.db
+*.opensdf
+*.opendb
+*.sdf
+*.sln
+*.suo
+*.xcodeproj
+*.xcworkspace
+
+# Build artifacts
+*.obj
+*.log
+*.tlog
+*.lastbuildstate
+*.idb
+*.pdb
+*.ipch
+*.aps
+*.ncb
+*.opendb
+*.cachefile
+*.VC.VC.opendb
+
+# Content folder - exclude large content
+Content/StarterContent/
+Content/Collections/
+Content/Developers/
+Content/Movies/
+
+# Shader cache
+Saved/Shaders/
+
+# Local files
+*.tmp
+*.temp
+*~
+
+# C/C++ compiled objects  
+*.o
+*.obj
+*.so
+*.dll
+*.dylib
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Python virtual environment
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Visual Studio
+.vs/
+*.vcxproj.user
+*.vcxproj.filters
+
+# Rider
+.idea/
+
+# Prerequisites
+*.d
+
+# Compiled Dynamic libraries
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Package files
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Logs
+*.log
+
+# Backup files
+*.backup
+*.bak
+*.swp
+*.swo
+
+# Node modules (if using any JS/TS)
+node_modules/

@@ -1,0 +1,857 @@
+{
+  "table_of_contents": [
+    {
+      "title": "Real-Time Fluid Dynamics for Games",
+      "heading_level": null,
+      "page_id": 0,
+      "polygon": [
+        [
+          155.75999450683594,
+          71.76316523551941
+        ],
+        [
+          456.42753195762634,
+          71.76316523551941
+        ],
+        [
+          456.42753195762634,
+          92.97537553310394
+        ],
+        [
+          155.75999450683594,
+          92.97537553310394
+        ]
+      ]
+    },
+    {
+      "title": "Abstract",
+      "heading_level": null,
+      "page_id": 0,
+      "polygon": [
+        [
+          54.0,
+          220.57149696350098
+        ],
+        [
+          104.25321525335312,
+          220.57149696350098
+        ],
+        [
+          103.05790275335312,
+          235.18046808242798
+        ],
+        [
+          53.106695115566254,
+          235.18046808242798
+        ]
+      ]
+    },
+    {
+      "title": "Introduction",
+      "heading_level": null,
+      "page_id": 0,
+      "polygon": [
+        [
+          53.47989284992218,
+          428.95823764801025
+        ],
+        [
+          125.89807283878326,
+          427.41136264801025
+        ],
+        [
+          124.70276033878326,
+          441.55926418304443
+        ],
+        [
+          52.28458034992218,
+          443.10613918304443
+        ]
+      ]
+    },
+    {
+      "title": "The Physics of Fluids",
+      "heading_level": null,
+      "page_id": 1,
+      "polygon": [
+        [
+          53.999969482421875,
+          154.36967968940735
+        ],
+        [
+          179.67367494106293,
+          154.36967968940735
+        ],
+        [
+          178.47836244106293,
+          168.56219172477722
+        ],
+        [
+          52.84951123595238,
+          168.56219172477722
+        ]
+      ]
+    },
+    {
+      "title": "A Fluid in a Box",
+      "heading_level": null,
+      "page_id": 2,
+      "polygon": [
+        [
+          52.52341577410698,
+          211.077392578125
+        ],
+        [
+          147.10009610652924,
+          209.91603112220764
+        ],
+        [
+          147.10009610652924,
+          224.29392457008362
+        ],
+        [
+          52.52341577410698,
+          225.84079957008362
+        ]
+      ]
+    },
+    {
+      "title": "Moving Densities",
+      "heading_level": null,
+      "page_id": 3,
+      "polygon": [
+        [
+          53.068912982940674,
+          280.5145318508148
+        ],
+        [
+          152.63998413085938,
+          280.5145318508148
+        ],
+        [
+          152.63998413085938,
+          295.0965006351471
+        ],
+        [
+          53.068912982940674,
+          295.0965006351471
+        ]
+      ]
+    },
+    {
+      "title": "Evolving Velocities",
+      "heading_level": null,
+      "page_id": 7,
+      "polygon": [
+        [
+          53.933574825525284,
+          408.5734577178955
+        ],
+        [
+          163.88488376140594,
+          407.0265827178955
+        ],
+        [
+          163.66607666015625,
+          421.0777587890625
+        ],
+        [
+          52.738262325525284,
+          421.78014850616455
+        ]
+      ]
+    },
+    {
+      "title": "Extensions",
+      "heading_level": null,
+      "page_id": 10,
+      "polygon": [
+        [
+          53.42599654197693,
+          392.2217266559601
+        ],
+        [
+          118.07997131347656,
+          390.6748516559601
+        ],
+        [
+          118.07997131347656,
+          405.0542793273926
+        ],
+        [
+          53.42599654197693,
+          406.6011543273926
+        ]
+      ]
+    },
+    {
+      "title": "Historical Notes",
+      "heading_level": null,
+      "page_id": 12,
+      "polygon": [
+        [
+          52.5,
+          70.86832934617996
+        ],
+        [
+          147.75,
+          70.86832934617996
+        ],
+        [
+          147.75,
+          85.1565061211586
+        ],
+        [
+          52.5,
+          85.1565061211586
+        ]
+      ]
+    },
+    {
+      "title": "Results",
+      "heading_level": null,
+      "page_id": 12,
+      "polygon": [
+        [
+          52.5,
+          278.7560284137726
+        ],
+        [
+          99.02127903699875,
+          278.7560284137726
+        ],
+        [
+          99.02127903699875,
+          293.0451729297638
+        ],
+        [
+          52.5,
+          293.0451729297638
+        ]
+      ]
+    },
+    {
+      "title": "What's on the CDROM ?",
+      "heading_level": null,
+      "page_id": 12,
+      "polygon": [
+        [
+          52.5,
+          541.790041923523
+        ],
+        [
+          193.5,
+          540.243166923523
+        ],
+        [
+          193.5,
+          554.5134286880493
+        ],
+        [
+          51.96986147761345,
+          556.0603036880493
+        ]
+      ]
+    },
+    {
+      "title": "References",
+      "heading_level": null,
+      "page_id": 13,
+      "polygon": [
+        [
+          53.082505613565445,
+          71.39147007465363
+        ],
+        [
+          118.80000305175781,
+          71.39147007465363
+        ],
+        [
+          118.80000305175781,
+          85.6464250087738
+        ],
+        [
+          53.082505613565445,
+          85.6464250087738
+        ]
+      ]
+    }
+  ],
+  "page_stats": [
+    {
+      "page_id": 0,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          84
+        ],
+        [
+          "Line",
+          37
+        ],
+        [
+          "Text",
+          6
+        ],
+        [
+          "SectionHeader",
+          3
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 1,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          72
+        ],
+        [
+          "Line",
+          31
+        ],
+        [
+          "Text",
+          4
+        ],
+        [
+          "SectionHeader",
+          1
+        ],
+        [
+          "Figure",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 2,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          84
+        ],
+        [
+          "TableCell",
+          63
+        ],
+        [
+          "Line",
+          34
+        ],
+        [
+          "Text",
+          4
+        ],
+        [
+          "Code",
+          2
+        ],
+        [
+          "Table",
+          1
+        ],
+        [
+          "SectionHeader",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 3,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          67
+        ],
+        [
+          "Line",
+          29
+        ],
+        [
+          "Text",
+          5
+        ],
+        [
+          "SectionHeader",
+          1
+        ],
+        [
+          "Figure",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 4,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          76
+        ],
+        [
+          "Line",
+          32
+        ],
+        [
+          "Text",
+          5
+        ],
+        [
+          "Code",
+          2
+        ],
+        [
+          "Figure",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 5,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          82
+        ],
+        [
+          "Line",
+          31
+        ],
+        [
+          "Text",
+          3
+        ],
+        [
+          "Code",
+          2
+        ],
+        [
+          "Figure",
+          1
+        ],
+        [
+          "Caption",
+          1
+        ],
+        [
+          "FigureGroup",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 6,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          63
+        ],
+        [
+          "Line",
+          30
+        ],
+        [
+          "Text",
+          2
+        ],
+        [
+          "Figure",
+          2
+        ],
+        [
+          "Code",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 7,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          97
+        ],
+        [
+          "Line",
+          42
+        ],
+        [
+          "Text",
+          4
+        ],
+        [
+          "Code",
+          3
+        ],
+        [
+          "SectionHeader",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 8,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          59
+        ],
+        [
+          "Line",
+          24
+        ],
+        [
+          "Text",
+          3
+        ],
+        [
+          "Figure",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 9,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          101
+        ],
+        [
+          "Line",
+          47
+        ],
+        [
+          "Text",
+          2
+        ],
+        [
+          "Code",
+          2
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 10,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          92
+        ],
+        [
+          "Line",
+          41
+        ],
+        [
+          "Text",
+          5
+        ],
+        [
+          "Code",
+          2
+        ],
+        [
+          "SectionHeader",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 11,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          87
+        ],
+        [
+          "Line",
+          40
+        ],
+        [
+          "Text",
+          6
+        ],
+        [
+          "Code",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 12,
+      "text_extraction_method": "surya",
+      "block_counts": [
+        [
+          "Line",
+          32
+        ],
+        [
+          "Span",
+          32
+        ],
+        [
+          "Text",
+          5
+        ],
+        [
+          "SectionHeader",
+          3
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 13,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          111
+        ],
+        [
+          "Line",
+          35
+        ],
+        [
+          "TableCell",
+          30
+        ],
+        [
+          "SectionHeader",
+          1
+        ],
+        [
+          "Table",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 14,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          6
+        ],
+        [
+          "Line",
+          3
+        ],
+        [
+          "Picture",
+          1
+        ],
+        [
+          "Caption",
+          1
+        ],
+        [
+          "PictureGroup",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 15,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          5
+        ],
+        [
+          "Line",
+          2
+        ],
+        [
+          "Picture",
+          1
+        ],
+        [
+          "Caption",
+          1
+        ],
+        [
+          "PictureGroup",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 16,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          13
+        ],
+        [
+          "Line",
+          6
+        ],
+        [
+          "Picture",
+          1
+        ],
+        [
+          "ListItem",
+          1
+        ],
+        [
+          "Text",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    }
+  ],
+  "debug_data_path": "debug_data/StamFluidforGames"
+}

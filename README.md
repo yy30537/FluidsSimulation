@@ -1,5 +1,7 @@
 ### Fluid Solver (Stable Fluids) + UE5 Swimming Simulator
 
+
+
 - **Repo contents**: 2D fluid solver in C (`solver.c`, `vorticity.c/h`, `bound.h`) and an OpenGL/GLUT demo (`demo.c`, `Makefile`).
 - **Key entry points**:
   - `vel_step(N, u, v, u_prev, v_prev, visc, dt, epsilon, &cells)`
@@ -13,6 +15,7 @@ cd /workspace
 make
 ./demo
 ```
+
 
 Args (optional): `N dt diff visc force source`. Example: `./demo 128 0.1 0 0 5 100`.
 
@@ -36,3 +39,9 @@ Args (optional): `N dt diff visc force source`. Example: `./demo 128 0.1 0 0 5 1
 
 ### Controls (demo)
 - Left mouse: add velocity. Right mouse: add density. Keys: `v` toggle velocity view, `c` clear, `q` quit. `1` toggle vorticity, `2` toggle fixed cells.
+
+
+‘‘‘bash
+Engine/Binaries/Linux/UnrealEditor
+
+’’’

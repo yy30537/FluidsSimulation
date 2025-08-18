@@ -1,0 +1,586 @@
+\begin{document}
+
+%% The   \maketitle'' command must be the first command after the
+%%   \begin{document}'' command. It prepares and prints the title block.
+
+%% the only exception to this rule is the \firstsection command
+\firstsection{Introduction}
+\maketitle
+
+Fluid simulation is a challenging and essential aspect of computer graphics, with applications ranging from special effects in films to interactive environments in video games. The complex, turbulent fluid flow presents significant computational challenges, particularly when aiming for real-time performance. This project builds upon the seminal work of Jos Stam on stable fluids \cite{stam1999stable, stam2003realtime}, which introduced a method for simulating fluids that is both stable and efficient enough for real-time applications.
+Our implementation extends Stam's basic model by incorporating several advanced features. We solve the incompressible Navier-Stokes equations using a semi-Lagrangian advection scheme and a projection method to enforce mass conservation. To enhance the visual quality of our simulations, we implement vorticity confinement as described by Fedkiw et al. \cite{fedkiw2001visual}, which helps preserve small-scale turbulent details often lost due to numerical dissipation.
+A key focus is the interaction between fluids and solid objects. We implement methods for handling fixed and moving solid boundaries within the fluid domain.\\ 
+The simulation of rigid body motion is another huge topic in computer graphics since many real-life objects can be modeled as rigid bodies. Based on the framework given in \cite{coursenote}, we implemented the simulation of rigid bodies with collision enabled. Furthermore, the two-way coupling between the fluid and rigid bodies are also included, allowing for realistic interactions where the fluid can influence the motion of objects and vice versa. In addition to these core features, we explore the integration of particle systems from Project 1 with the fluid simulation.
+
+\section{The fluid system}
+\subsection{Basics}
+The velocity and density fields define the state of the fluid at any given time. These fields are represented by $N\times N$ discrete grid and stored in arrays, which get updated at each time step:
+
+Velocity Field (\(\mathbf{u}\)): Represented by two arrays (u and v) for the x and y components of the velocity.
+
+Density Field (\(\rho\)): Represented by an array (dens) for the fluid density.
+
+For a 2-dimensional incompressible fluid, the system is described by the velocity field \(\mathbf{u}\) and the pressure field \(p\). The state of the fluid at any given time is governed by the Navier-Stokes equations:
+
+Continuity Equation (Mass Conservation):
+\[
+\nabla \cdot \mathbf{u} = 0 \tag{1}
+\]
+This equation ensures that the fluid density remains constant, implying no fluid is created or destroyed.
+
+Momentum Equation:
+\[
+\frac{\partial \mathbf{u}}{\partial t} = -(\mathbf{u} \cdot \nabla)\mathbf{u} - \frac{1}{\rho} \nabla p + \nu \nabla^2 \mathbf{u} + \mathbf{f} \tag{2}
+\]
+This equation describes the change in the velocity field \(\mathbf{u}\) over time due to advection (self-interaction), pressure gradients, diffusion (viscosity), and external forces \(\mathbf{f}\).
+
+The Helmholtz-Hodge Decomposition states that any vector field \(\mathbf{w}\) can be uniquely decomposed into a divergence-free component \(\mathbf{u}\) and a gradient of a scalar field \(q\):
+
+\[
+\mathbf{w} = \mathbf{u} + \nabla q \tag{3}
+\]
+
+where \(\nabla \cdot \mathbf{u} = 0\). This decomposition allows us to define a projection operator \(\mathbf{P}\) that projects any vector field \(\mathbf{w}\) onto its divergence-free part:
+
+\[
+\mathbf{u} = \mathbf{P} \mathbf{w} \tag{4}
+\]
+
+Then apply the projection operator to the momentum equation to get a single equation for the velocity:
+\[
+\frac{\partial \mathbf{u}}{\partial t} = \mathbf{P} \left( -(\mathbf{u} \cdot \nabla) \mathbf{u} + \nu \nabla^2 \mathbf{u} + \mathbf{f} \right) \tag{5}
+\]
+
+To solve the Navier-Stokes equations, we discretize time into small steps \(\Delta t\) and perform the following steps for each time step:
+
+1. Add Force:
+Add external forces to the velocity field.
+    
+    \[
+    \mathbf{u}^* = \mathbf{u} + \Delta t \mathbf{f}
+    \]
+    
+2. Diffuse:
+Account for viscosity using an implicit method to solve the diffusion equation:
+    
+    \[
+    \left( I - \nu \Delta t \nabla^2 \right) \mathbf{u}^{**} = \mathbf{u}^*
+    \]
+    
+3. Advect:
+Move the velocity field along itself:
+    
+    \[
+    \mathbf{u}^{***}(\mathbf{x}) = \mathbf{u}^{**}(\mathbf{p}(\mathbf{x}, -\Delta t))
+    \]
+    Here, \(\mathbf{p}(\mathbf{x}, -\Delta t)\) is the backtracked position of \(\mathbf{x}\) using the velocity field.
+    
+4. Project:
+Enforce mass conservation by making the velocity field divergence-free. This involves solving a Poisson equation for the pressure \(q\):
+    
+    \[
+    \nabla^2 q = \nabla \cdot \mathbf{u}^{***}
+    \]
+    
+    Then update the velocity field:
+    
+    \[
+    \mathbf{u} = \mathbf{u}^{***} - \nabla q
+    \]
+
+
+The simulation pipeline follows these steps to update the state of the fluid at each time step. The pipeline repeatedly executes the procedure to simulate the fluid's behavior over time:
+
+$\mathbf{w}_0(\mathbf{x}) \xrightarrow{\text{add force}} \mathbf{w}_1(\mathbf{x}) \xrightarrow{\text{advect}} \mathbf{w}_2(\mathbf{x}) \xrightarrow{\text{diffuse}} \mathbf{w}_3(\mathbf{x}) \xrightarrow{\text{project}} \mathbf{w}_4(\mathbf{x})$
+
+The main simulation loop orchestrates the execution of the different steps in the pipeline, first allocates and initializes arrays for velocity and density fields, then captures user inputs for adding sources or applying forces, performs velocity and density steps, including vorticity confinement, lastly uses OpenGL to visualize the current state of the simulation.
+\subsection{Boundary condition}
+\label{sec:bnd}
+During simulation, the density and velocity of the fluid at some position may conflict desired constraints. Such cases should be handled properly to keep the system stay in legal state. In this project, we focus on the non-penetration constraint, which requires that the flow never spills into solid objects. The density field and velocity field are immediately adjusted to legal state on the boundaries whenever the density and velocity get updated. Therefore an additional function \emph{set\_bnd()} is added to the advect and projection steps.  
+
+\section{Vorticity Confinement}
+Vorticity confinement is a technique used to reintroduce small-scale rotational motions, or vortices, into the fluid simulation that may be lost due to numerical dissipation. This is useful in simulating smoke or turbulent fluids. The implementation involves the following procedure \cite{fedkiw2001visual}:
+
+\begin{enumerate}
+    \item Calculate the vorticity at each cell as the curl of the velocity field. 
+    
+    The vorticity \( \omega \) at each grid cell is calculated as the curl of the velocity field. For a 2D velocity field \(\mathbf{u} = (u, v)\), the vorticity is given by: \[ \omega = \frac{\partial v}{\partial x} - \frac{\partial u}{\partial y} \]. This is done by the routine: 
+    
+    \emph{\textbf{compute\_vorticity}(int N, float *u, float *v, float *w)}. 
+    
+    The central difference method is used to compute the partial derivatives.
+
+    \item Calculate the gradient of the vorticity magnitude $\eta$. 
+    
+    This gradient indicates the direction of increasing vorticity magnitude. \(\eta_x\) and \(\eta_y\) are the gradients in the x and y directions respectively, computed using the central difference method. This is done by the routine:
+    
+    \emph{\textbf{compute\_eta}(int N, float *w, float *eta\_x, float *eta\_y)}.
+
+    \item Normalize the gradient $\eta$ to get a unit vector pointing towards regions of higher vorticity. This is done by the routine: 
+    
+    \emph{\textbf{normalize\_eta}(int N, float *eta\_x, float *eta\_y, float *norm\_eta\_x, float *norm\_eta\_y)}.
+
+    \item Compute and apply a force proportional to the vorticity and the normalized gradient to the velocity field to enhance vortices. This is done by the routine: 
+    
+    \emph{\textbf{vorticity\_confinement}(int N, float *u, float *v, float *w, float *eta\_x, float *eta\_y, float *norm\_eta\_x, float *norm\_eta\_y, float dt, float epsilon)}. 
+    
+    A force \(\mathbf{f}_{\text{conf}}\) is added to the field, computed as: \[ \mathbf{f}_{\text{conf}} = \epsilon h (\mathbf{N} \times \omega) \] where \(\epsilon\) is a scaling factor and \(h\) is the grid spacing. The force in the x-direction is computed as \( \epsilon \times (\eta_y \times \omega) \) and in the y-direction as \( \epsilon \times (-\eta_x \times \omega) \). This force is then added to the velocity field.
+\end{enumerate}
+
+
+
+
+
+\section{Fixed Objects}
+\subsection{Interactive marking}
+We offer the user an interactive way to mark the discrete cells as solid. This is realized by tracking the mouse moving on screen and fill in the marking array (see \autoref{sec:bnd}). Note that fixed object of arbitrary shape can be created and the marked cells are considered both the boundary and the interior of that object.
+\subsection{Non-penetration constraint}
+\label{sec:fixed bc}
+As in the case of the external boundaries, the non-penetration condition should also be satisfied with respect to the fixed object during the fluid simulation.
+To this end, additional adjustment is added to the function \emph{set\_bnd()} given in \autoref{sec:bnd}:
+\begin{itemize}
+    \item Velocity field: the velocity at the solid boundary associated with the fix object is set to zero:
+    \begin{equation*}
+        v_{bnd}=0
+    \end{equation*}
+    The $v_{bnd}$ is approximated by the averaged velocity of the velocity at the marked cell $v_{mc}$ and the velocity at the nearest unmarked cell $v_{near}$:
+    \begin{equation*}
+        v_{bnd}=\frac{v_{mc}+v_{near}}{2}
+    \end{equation*}
+    We then set the velocity at the marked cell to:
+    \begin{equation*}
+        v_{mc}=2v_{vnd}-v_{near}=-v_{near}
+    \end{equation*}
+    \item Density field: the density values in the boundary area (i.e., the marked cells) is simply set to zero, which is a natural conclusion for the non-penetration constraint:
+    \begin{equation*}
+        den_{mc}=0
+    \end{equation*}
+\end{itemize}
+
+\section{Moving Solid objects}
+\subsection{Interactive moving}
+When user clicks around the fixed object and drags it, the moving direction of the mouse is recorded. The direction is then scaled by a factor as an estimation of the velocity $v_o$ of the object.
+\subsection{Updated boundary condition}
+\label{sec:updated bc}
+The boundary condition for the fluid with respect to the moving object is slightly different from the case of fixed object. That is, the relative velocity of the fluid at the boundary and the object along the boundary's normal direction should be zero:
+\begin{equation*}
+    v_{bnd}\cdot n_{solid}=v_{o}\cdot n_{solid}
+\end{equation*}
+However, as the normal direction at some point on the boundary of an arbitrary curve is difficult to determine, we simply set $v_{bnd}=v_{o}$, which trivially satisfies the above condition. \\
+Like in \autoref{sec:fixed bc}, we use the averaged velocity $(v_{mc}+v_{near})/2$ as an approximation to $v_{bnd}$. The updated boundary condition for the moving object is then given as:
+\begin{itemize}
+    \item Velocity field:
+    \begin{equation*}
+        v_{mc}=2v_{vnd}-v_{near}=2v_{o}-v_{near}
+    \end{equation*}
+    \item Density field:
+    \begin{equation*}
+        den_{mc}=0
+    \end{equation*}
+\end{itemize}
+
+\section{Rigid Body}
+\subsection{Definition}
+The rigid body is an idealization of an object that does not deform or change shape. The motion of a rigid body can be decomposed to the translation of the center of mass and the rotation around the center of mass. The following set of attributes is sufficient for formulating the rigid motion and therefore be included in our definition of the basic rigid body class:
+\label{sec:rigid body def}
+\begin{itemize}
+    \item Mass: a scalar giving the mass of the body.
+    \item Ibody: a 3x3 matrix giving the inertia tensor in the body-space, determining the body's resistance to rotation, an analogues concept to the mass when formulating the translation of the body.
+    \item x(t): a 3-elements vector giving the position of the center of mass of the body.
+    \item q(t): an quaternion giving the rotation state of the body. We use quaternion here instead of a rotation matrix to allow for smooth transitions between rotation states. 
+    \item p(t): a 3-elements vector giving the momentum of the body.
+    \item L(t): a 3-elements vector giving the angular momentum of the body.
+\end{itemize}
+Also we have a set of auxiliary variables useful when simulating the rigid motion:
+\begin{itemize}
+    \item Ibodyinv: a 3x3 matrix giving the inverse of inertia tensor, introduced to achieve efficient calculation.
+    \item R(t): a 3x3 matrix giving the rotation state, derived from the quaternion.
+    \item Iinv: a 3x3 matrix giving the inertia tensor in the world-space, computed by:
+    \begin{equation*}
+        Iinv=R(t)Ibody^{-1}R(t)^T
+    \end{equation*}
+    \item v(t): a 3-element vector giving the velocity of the center of mass, computed by:
+    \begin{equation*}
+        v(t)=p(t)/mass
+    \end{equation*}
+    \item $\omega$(t): a 3-element vector giving the angular velocity, computed by:
+    \begin{equation*}
+        \omega(t)=Iinv*L(t)
+    \end{equation*}
+    \item $F$: a 3-element vector giving the accumulated force.
+    \item $\tau$: a 3-element vector giving the accumulated torque.
+\end{itemize}
+Note that even though our goal is to simulate rigid motion in 2D space, the above variables are all defined in 3D space in order to achieve computational consistency. For example, by fixing the third component of $x(t)$ to zero zero and fixing the second and the third components of $w(t)$ to zeros, the bodies are guaranteed to translate and rotate in the 2D space. 
+\subsection{Geometry-specific methods}
+We also define a set of geometry-specific methods necessary for simulating the rigid motion, collision and the interaction with the fluid:
+\begin{itemize}
+    \item \emph{precompute\_Ibodyinv()}: pre-compute the constant variable $Ibody^{-1}$ as described in \autoref{sec:rigid body def}.
+    \item \emph{update\_AABB()}: update the axis-aligned bounding box(AABB), used for collision detection.  
+    \item \emph{mark\_bnd\_solid()}: mark the boundary and solid area (cells) occupied by the body, used for determining the non-penetration condition for fluid-object interaction (as described in \autoref{sec:bnd}).
+    \item \emph{get\_contacts()}: detect the collision (or penetration) between the body and another body. Return all contacting points.
+\end{itemize}
+We leave these methods as interfaces and all derived rigid body classes (i.e., body of various geometric shapes) need to implement them individually. Given the time limit for this project, we implemented only one type of rigid body, detailed in \autoref{sec:rec body}.
+
+\section{The Rectangular Rigid Body}
+\label{sec:rec body}
+In this section, we give the implementation of the simplest type of rigid body, the rectangular body.
+\subsection{Inertia}
+Let's denote the width and height of the rectangular body as $W$ and $H$ respectively, and $\epsilon$ a small value representing the depth in the z-dimension, then the inertia tensor in the body space is computed as:
+\begin{equation*}
+Ibody=\frac{M}{12}\begin{bmatrix}
+    \frac{H}{2}^2+\frac{\epsilon}{2}^2 & 0 & 0 \\
+    0 & \frac{W}{2}^2+\frac{\epsilon}{2}^2 & 0 \\
+    0 & 0 & \frac{W}{2}^2+\frac{H}{2}^2
+\end{bmatrix}
+\end{equation*}
+\subsection{marking}
+Marking a rectangular area with arbitrary rotation angle in the discrete grid can be done by first marking the four edges using the bresenham line drawing algorithm \cite{bresenham} and then filling in the interior area bounded by the edges by scanning along the y-direction. The algorithm is given in \autoref{alg:mark}.
+\begin{algorithm}[htbp]
+    \SetAlgoLined
+    \KwData{A rectangular body $b$}
+    \KwResult{Output result}
+    \For{each edge $e(p_1,p_2)$ in $b.edges$}{
+        bresenham($p_1$,$p_2$)
+    }
+    
+    $minY \leftarrow b.aabb.minY$\\
+    $maxY \leftarrow b.aabb.maxY$\\
+    \For{y in range $[minY,maxY]$}{
+        $x_1$,$x_2$ $\leftarrow$ get\_intersect\_points($y$, $b.edges$)\\
+        \For{x in range $[x_1,x_2]$}{
+           mark\_cell($x$,$y$)
+        }
+    }
+        \caption{Mark the boundary and solid area occupied by a rectangular body}\label{alg:mark}
+\end{algorithm}
+Where $aabb$ is the bounding box associated with the body, $get\_intersect\_points()$ is a subroutine used to detect the intersections between the y-scanning line and all edges of the body. Note that the above algorithm applies to arbitrary convex polygons, not restricted to rectangles.
+\begin{figure}[H]
+\centering
+  \includegraphics[width=0.50\linewidth]{figures/mark.png}
+  \caption{An example of marking the boundary of a rectangular rigid body on discrete cells. The red cells are marked by running the bresenham line drawing algorithm for four times.}
+  \label{fig:mark}
+\end{figure}
+
+\subsection{collision detection}
+\label{sec:colli detect}
+The following algorithm gives the method we employed to detect all contacting points between a rectangular body and another rectangular body. Only the vertex-edge contacts are taken into account since such type of contacts is mostly likely to occur and the edge-edge contact can be considered as a combination of two simultaneous vertex-vertex contacts.
+\begin{algorithm}[htbp]
+    \SetAlgoLined
+    \KwData{A rectangular body $b_1$}
+    \KwData{A rectangular body $b_2$}
+    \KwResult{contact points cts}
+    
+    \For{each vertex $v$ in $b_1.vertices$}{
+        \For{each edge $e(p_1,p_2)$ in $b_2.edges$}{
+           \emph{if} penetrate($v$, $e$)\quad cts.add(v)
+        }
+    }
+    \caption{Detect collision with another rectangular body}\label{alg:mark}
+\end{algorithm}
+Where \emph{penetrate} is a subroutine determining whether a vertex $v$ of body $b_1$ penetrates an edge $e(p1,p2)$ of body $b_2$. This subroutine returns true if the following conditions are satisfied:
+\begin{itemize}
+    \item the vertex lies in the backward side of the edge, which is tested by projecting $\overrightarrow{p_1v}$ along the normal direction of the edge :
+    \begin{equation*}
+        \overrightarrow{p_1v} \cdot n_e<0
+    \end{equation*}
+    \item the distance between the vertex and the edge is smaller than some value:
+    \begin{equation*}
+        |\overrightarrow{p_1v}\cdot n_e| < \epsilon
+    \end{equation*}
+    we pick $\epsilon=0.001$ in our application.
+    \item the projection of the vertex onto the edge lies in the range restricted by the two vertices of the edge, which is determined by testing the angles $\angle vp_1p_2$ and $\angle vp_2p_1$:
+   \begin{gather*}
+     \overrightarrow{p_1v} \cdot \overrightarrow{p_1p_2}>0 \quad and
+     \quad \overrightarrow{p_2v} \cdot \overrightarrow{p_2p_1}>0
+   \end{gather*}
+\end{itemize}
+
+\section{Moving Rigid bodies}
+\subsection{State \& derivative definition}
+The definition of a rigid body is described in \autoref{sec:rigid body def}. However, we need only a subset of the variables required to proceed the simulation step for rigid motion, including $x(t)$, $q(t)$, $p(t)$, $L(t)$. Hence, the system state of a system containing $n$ rigid bodies is defined by a vector of length 13*$n$:
+\begin{equation*}
+    y=[x_1,q_1,p_1,L_1, ..., x_n,q_n,p_n,L_n]
+\end{equation*}
+Accordingly, the derivative of the system state with respect to time is defined as:
+\begin{equation*}
+    \Dot{y}=[v_1,\Dot{q_1},f_i,\tau_i, ..., v_n,\Dot{q_n},f_n,\tau_n]
+\end{equation*}
+where $\Dot{q_i}$ is computed as:
+\begin{gather*}
+\Dot{q_i}=\frac{\omega_iq_i}{2}\\
+\end{gather*}
+\subsection{Step the bodies}
+\label{sec:step bodies}
+At each time step during simulation, the ODE solver is called to perform 4-th order Runge-Kutta, where a subroutine \emph{dydt()} is called several times to calculate the system derivative at some given state. The main logic involved in \emph{dydt()} is about aggregating external forces and torques applied to the rigid bodies. In our implementation, two types of force/torque is included, namely the interactive force from user interaction and the fluid force detailed in \autoref{sec:fluid force}.
+\subsection{Updated boundary condition}
+The non-penetration condition of the fluid with respect to the moving rigid body is generally the same as the case for moving object (see \autoref{sec:updated bc}), only that we need to additionally take the rotation into account. That is, the velocity of some point of the rigid body is now the combination of translation and rotation:
+\begin{equation*}
+    v_p=v_c+\omega \times r_p
+\end{equation*}
+where $v_c$ is the velocity of the center of mass, $r_p$ the point's relative position with respect to the center of mass.
+Then follow the same approximation as in \autoref{sec:updated bc}, we get the updated boundary condition:
+\begin{itemize}
+    \item Velocity field:
+    \begin{gather*}
+        v_{bnd}=v_p\\
+        v_{bnd}=\frac{v_{mc}+v_{p}}{2}\\
+        v_{mc}=2v_{p}-v_{near}=2(v_c+\omega \times r_p)-v_{near}
+    \end{gather*}
+    \item Density field:
+    \begin{equation*}
+        den_{mc}=0
+    \end{equation*}
+\end{itemize}
+\section{Colliding contact between rigid bodies}
+\subsection{workflow}
+The workflow for handling collision contact between rigid bodies consists of three steps:
+\begin{itemize}
+    \item \textbf{Penetration detection}: detect the inter-penetration events between pairs of rigid bodies.
+    \item \textbf{Velocity adjustment}: for each detected penetration, the velocity of the two bodies are adjusted to make them separate and will not further moving towards each other.
+    \item \textbf{State back up}: after the velocity has been adjusted, the system state needs to be backed up to the exact moment when the contact occurred.
+\end{itemize}
+Following subsections give a detailed description for each of the processing steps.
+\subsection{Penetration detection}
+Instead of exhaustively iterate through all pairs of bodies to find contacts, we add a pre-processing step before actually detecting the contact points to improve the efficiency. That is, we first filter out the pairs of bodies that possibly intersect each other by testing the relative position between the axis-aligned bounding boxes(AABB) of the bodies. \autoref{alg:aabb_intersect} shows the detection process in detail.
+
+\begin{algorithm}[htbp]
+    \SetAlgoLined
+    \KwData{Rigid bodies $bodies$}
+    \KwData{Auxiliary arrays $xx[,]$, $yy[,]$}
+    \KwResult{Contact points $cts$}
+    
+    Array $x \leftarrow empty$ \\
+    Array $y \leftarrow empty$ \\
+    
+    \For{$i \leftarrow 0$ \KwTo $n\_bodies$}{
+        $b \leftarrow bodies[i]$ \\
+        $x.add(b.aabb.minX, i)$ \\
+        $x.add(b.aabb.maxX, i)$ \\
+        $y.add(b.aabb.minY, i)$ \\
+        $y.add(b.aabb.maxY, i)$ \\
+    }
+    
+    sort\_and\_sweep($x, xx$) \\
+    sort\_and\_sweep($y, yy$) \\
+    
+    \For{$i \leftarrow 0$ \KwTo $n\_bodies$}{
+        \For{$j \leftarrow i+1$ \KwTo $n\_bodies$}{
+            \If{$xx[i, j]$ = $true$ \textbf{and} $yy[i, j]$ = $true$}{
+                    $b_i \leftarrow bodies[i]$ \\
+                    $b_j \leftarrow bodies[j]$ \\
+                    $cts_i \leftarrow b_i.detect(b_j)$ \\
+                    $cts_j \leftarrow b_j.detect(b_i)$ \\
+                    $cts.add(cts_i)$\\
+                    $cts.add(cts_j)$\\
+            }
+        }
+    }
+    return $cts$
+    \caption{Filter out pairs of possibly intersecting bodies}
+    \label{alg:aabb_intersect}
+\end{algorithm}
+where \emph{sort\_and\_sweep()} is a subroutine borrowed from \cite{coursenote} that sweeps through the bounding boxes to find out overlapped pairs of boxes on the x-direction or y-direction. The subroutine \emph{b.detect()} is given in \autoref{sec:colli detect}, which is a geometry-specific method for detecting the contacts between two bodies.
+The above algorithm can be interpreted in the way that only the pair of bodies with bounding boxes overlapping on both x and y directions are possible to intersect, for which we continue with the actual detection process.
+\subsection{Velocity adjustment}
+After we have obtained all vertex-edge contacts, we separate the contacting (penetrating) pair of two bodies by applying an impulse to both on opposite directions. The impulse is aligned with the normal direction of the contacting edge and is calculated as:
+\begin{gather*}
+j = \frac{-(1 + \epsilon) v_{\text{rel}}}
+{\frac{1}{M_a} + \frac{1}{M_b} + \mathbf{n} \cdot \left( I_a^{-1} (r_a \times \mathbf{n}) \right) \times r_a + \mathbf{n}\cdot \left( I_b^{-1} (r_b \times \mathbf{n}) \right) \times r_b}\\
+\mathbf{F}=j\mathbf{n}
+\end{gather*}
+where $I_a$ and $I_b$ denote the inertia tensor of the two bodies respectively, $r_i$ denotes the contact point's relative position with respect to the center of mass of body $b_i$, $v_{rel}$ the relative velocity between the two bodies at the contact point. We set $\epsilon = 0.15$ so that the bodies bounce away in the $\mathbf{n}$ direction with less speed than they approached. \\
+Note that in every single time step during simulation, the detection and adjustment process described above are iteratively executed until no collision present. Another thing to note here is that how the external boundaries of the whole scene (i.e., the four solid boundaries restricting the fluid, see \autoref{sec:bnd}) is handled. We implement the four external boundaries as the rigid bodies with infinite mass so that the body-boundary contacts can be handled uniformly without special treatment and that the boundaries are kept static. 
+
+\subsection{State back up}
+Whenever the inter-penetration is detected, the system state needs to be backed up to the exact moment at which the contact occurred. Since the trajectory of the system evolution is not available, the target state can only be found by searching in the range $[y_{prev},y_{curr}]$, with $y_{prev}$ the previous system state from the last time step and $y_{curr}$ the current state with inter-penetration present. We employ an efficient algorithm, namely the bisection search \cite{coursenote}, to look for the contacting moment:
+\begin{algorithm}[htbp]
+    \SetAlgoLined
+    \KwData{Previous system state $y_{prev}$}
+    \KwData{Current system state $y_{curr}$}
+    \KwData{Time step $dt$}
+    \KwData{Error tolerance $\epsilon$}
+    \KwResult{System state at the contacting moment $y_c$}
+    $L \leftarrow 0$\\
+    $R \leftarrow dt$\\
+    $T \leftarrow (L+R)/2$\\
+    $\Dot{y} \leftarrow dydt(y_{prev},dt)$ \\
+    $y_c \leftarrow y_{prev}+(T-L)\Dot{y}$\\
+    $cts \leftarrow penetration\_detect(y_c)$\\
+    \While{$is\_err\_ok(y_c,cts,\epsilon)$}{
+        \If{$cts$ is not empty}{
+            $R \leftarrow T$\\
+        }
+        \Else{
+            $L \leftarrow T$\\
+        }
+        $T \leftarrow (L+R)/2$\\
+        $\Dot{y} \leftarrow dydt(y_{c},dt)$ \\
+        $y_c \leftarrow y_{c}+(T-L)\Dot{y}$\\
+        $cts \leftarrow penetration\_detect(y_c)$\\
+    }
+    \caption{Bisection searching for the exact contacting moment}\label{alg:bisection}
+\end{algorithm}
+The subroutine \emph{is\_err\_ok()} is used to check whether the error between the candidate state $y_c$ and the exact contacting state has decreased to a value within tolerance $\epsilon$. The function returns true if all contacts in the list $cts$ have an penetrating depth smaller than $\epsilon$ and returns false if otherwise.\\
+The main idea of \autoref{alg:bisection} falls under the framework of the classical binary searching algorithm. That is, suppose that we are searching in the range $[y_L,y_R]$ formed by the initial state $y_L$ and the ending state $y_R$, we take the midpoint state $y_{T}$ as the candidate and test whether any contacts(penetration) occur in that state. If no any contact detected, the continue searching in the range $[y_T,y_R]$, otherwise searching in the range $[y_L,y_T]$. 
+
+\begin{figure}[H]
+\centering
+  \includegraphics[width=0.80\linewidth]{figures/backup.png}
+  \caption{An example of the state back scheme. Body A moves towards another body B and inter-penetration occurs at time step $t0+dt$. The red points denote the candidate state when searching for the exact contact moment. Note that the searching range halves at each iteration.}
+  \label{fig:backup}
+\end{figure}
+
+\section{Two-way Coupling}
+We implemented a simple and intuitive model of the mutual interaction between the rigid bodies and the fluid.
+\subsection{Fluid force to bodies}
+\label{sec:fluid force}
+The force that the fluid exerts to the rigid body at some contacting point $p$ is determined by both the velocity and the density of the flow at $p$:
+\begin{equation*}
+    \mathbf{F}_{p}=s\cdot den_p \cdot \mathbf{v_p}
+\end{equation*}
+That is, the direction of the force is aligned with the velocity $\mathbf{v_p}$ and the magnitude is proportional to the density $den_p$. $s$ is a scaling factor. \\
+The total force and the total torque the fluid exerts to the rigid body $b$ are then the aggregation of the forces and torques applied on all boundary points:
+\begin{gather*}
+    \mathbf{F}_{total}=\sum_{p\in b.bnds}^{}\mathbf{F}_p\\
+    \mathbf{\tau}_{total}=\sum_{p\in b.bnds}^{}\mathbf{r}_p \times \mathbf{F}_p\\
+\end{gather*}
+The forces and torques are calculated in the function \emph{dydt()} for determining the derivative of system state, as described in \autoref{sec:step bodies}. 
+
+\subsection{Body force to fluid}
+The force that the rigid body exerts to the fluid at some contacting point $p$ is simply the opposite of $F_p$:
+\begin{equation*}
+    \mathbf{F}'_p=-\mathbf{F}_p
+\end{equation*}
+This force is added to the component $\mathbf{f}$ in equation (5) when stepping the fluid simulation.
+
+\section{Particles and Fluids}
+We implemented the one-way coupling of the particle system and the fluid. Specifically, the fluid exerts a force to the individual particles, which is calculated exactly in the same way as in \autoref{sec:fluid force}. 
+
+\section{Results}
+In this section, a series of screenshots are listed to show the effects of all features we have.
+
+\subsection{Vorticity Confinement}
+\begin{figure}[h]
+\centering
+  \includegraphics[width=0.45\linewidth]{figures/VC0.png}
+  \caption{$\epsilon = 0$, which displays no swirling motions.}
+  \label{fig:object}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+  \includegraphics[width=0.90\linewidth]{figures/VC1.png}
+  \caption{$\epsilon = 1$, which displays normal swirling motions.}
+  \label{fig:object}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+  \includegraphics[width=0.90\linewidth]{figures/VC2.png}
+  \caption{$\epsilon = 3$, which displays significant swirling motions.}
+  \label{fig:object}
+\end{figure}
+
+
+\subsection{Solid objects}
+\begin{figure}[H]
+\centering
+  \includegraphics[width=0.95\linewidth]{figures/object.png}
+  \caption{User-defined solid objects of arbitrary shape, interacting with the fluid. The objects are created by mouse interaction and allow for moving by dragging. Both (a) and (b) show that the non-penetration constraint is always satisfied.}
+  \label{fig:object}
+\end{figure}
+
+\subsection{Rigid bodies \& fluid interaction}
+\begin{figure}[h]
+\centering
+  \includegraphics[width=0.95\linewidth]{figures/rigid.png}
+  \caption{The fluid interacting with two rectangular rigid bodies, with translation and rotation enabled. (a)The density field. (b)The velocity field. Note that the non-penetration constraint is always satisfied for moving bodies.}
+  \label{fig:rigid}
+\end{figure}
+
+\subsection{Colliding contact}
+\begin{figure}[H]
+\centering
+  \includegraphics[width=0.90\linewidth]{figures/collision.png}
+  \caption{Collision contact between two rigid bodies. (a)The movement when inter-penetration detected. (b)After velocity adjustment and state backing up, the bodies get separated.}
+  \label{fig:collision}
+\end{figure}
+
+\subsection{Two-way coupling}
+\begin{figure}[H]
+\centering
+  \includegraphics[width=0.95\linewidth]{figures/twoway.png}
+  \caption{Mutual interaction between the fluid and the objects. Both figures show the objects are moving pushed by the flow. Meantime, opposite forces are exerted to the flow by the objects.}
+  \label{fig:twoway}
+\end{figure}
+
+\subsection{Particles and fluids}
+\begin{figure}[H]
+\centering
+  \includegraphics[width=0.95\linewidth]{figures/particle.png}
+  \caption{The interaction between a particle system of cloth and the fluid. The cloth got deformed with the force from the flow. }
+  \label{fig:particles}
+\end{figure}
+
+
+
+
+
+
+
+%% if specified like this the section will be committed in review mode
+\acknowledgments{
+We would like to thank the professor for his guidance during this project and the opportunity to gain a deep understanding of the theoretical knowledge and practical skills in simulating the evolution of the fluid system and the motion of rigid bodies.}
+
+%\bibliographystyle{abbrv}
+\bibliographystyle{unsrt}
+\bibliographystyle{abbrv-doi}
+%\bibliographystyle{abbrv-doi-narrow}
+%\bibliographystyle{abbrv-doi-hyperref}
+%\bibliographystyle{abbrv-doi-hyperref-narrow}
+\bibliography{template}
+
+\clearpage
+\appendix{
+  \section{Hardware}\label{appendix:hardware}
+  Experiments are conducted on a PC-level system with the following configuration:
+
+  \begin{center}
+    \begin{tabular}{ |c|c| }
+      \hline
+      \multicolumn{2}{|c|}{Evaluation system specifications} \\
+      \hline
+      CPU     & Intel Core i7-12700H   2.30 GHz            \\
+      GPU     & GeForce RTX3050                             \\
+      Resolution & 1920 × 1080                                  \\
+      Memory  & 32 GB                                        \\
+      OS  & Windows 11                                        \\
+      \hline
+    \end{tabular}
+  \end{center}
+  
+  \section{Contributions}
+
+  \textbf{Yang's contributions}
+  \begin{itemize}
+    \setlength\itemsep{.1em}
+    \item Implement the fluid simulation.
+    \item Implement the vorticity confinement.
+    \item Implement the interactive creation of the solid objects.
+    \item Implement the boundary condition for solid objects.
+
+  \end{itemize}
+  \vspace*{0.5em}
+  \textbf{Zhang' contributions}
+  \begin{itemize}
+  \item Implement the rigid body motion simulation.
+  \item Implement the collision between rigid bodies.
+  \item Implement the interaction between fluid and rigid bodies.
+  \item Implement the interaction between fluid and particles.
+    \setlength\itemsep{.1em}
+
+  \end{itemize}
+}
+
+\end{document}
+

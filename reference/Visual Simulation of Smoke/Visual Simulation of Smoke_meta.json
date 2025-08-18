@@ -1,0 +1,726 @@
+{
+  "table_of_contents": [
+    {
+      "title": "Visual Simulation of Smoke",
+      "heading_level": null,
+      "page_id": 0,
+      "polygon": [
+        [
+          192.42344391345978,
+          84.6058024764061
+        ],
+        [
+          418.18243408203125,
+          84.6058024764061
+        ],
+        [
+          418.18243408203125,
+          102.86060214042664
+        ],
+        [
+          192.42344391345978,
+          102.86060214042664
+        ]
+      ]
+    },
+    {
+      "title": "Abstract",
+      "heading_level": null,
+      "page_id": 0,
+      "polygon": [
+        [
+          53.6000971198082,
+          168.71014404296875
+        ],
+        [
+          103.00136178731918,
+          168.71014404296875
+        ],
+        [
+          103.00136178731918,
+          180.66534423828125
+        ],
+        [
+          53.6000971198082,
+          180.66534423828125
+        ]
+      ]
+    },
+    {
+      "title": "1 Introduction",
+      "heading_level": null,
+      "page_id": 0,
+      "polygon": [
+        [
+          53.790206998586655,
+          385.190185546875
+        ],
+        [
+          142.14208984375,
+          385.190185546875
+        ],
+        [
+          142.14208984375,
+          397.1453857421875
+        ],
+        [
+          53.790206998586655,
+          397.1453857421875
+        ]
+      ]
+    },
+    {
+      "title": "1.1 Previous Work",
+      "heading_level": null,
+      "page_id": 0,
+      "polygon": [
+        [
+          318.0,
+          235.94538474082947
+        ],
+        [
+          410.95703125,
+          235.94538474082947
+        ],
+        [
+          410.95703125,
+          246.3394775390625
+        ],
+        [
+          318.0,
+          246.3394775390625
+        ]
+      ]
+    },
+    {
+      "title": "1.2 Our Model",
+      "heading_level": null,
+      "page_id": 0,
+      "polygon": [
+        [
+          318.0,
+          668.1368713378906
+        ],
+        [
+          391.8753311634064,
+          667.3325343132019
+        ],
+        [
+          391.8753311634064,
+          678.0994720458984
+        ],
+        [
+          318.0,
+          678.1780314445496
+        ]
+      ]
+    },
+    {
+      "title": "The Equations of Fluid Flow\n2",
+      "heading_level": null,
+      "page_id": 1,
+      "polygon": [
+        [
+          52.5,
+          453.3847761154175
+        ],
+        [
+          232.71473693847656,
+          453.3847761154175
+        ],
+        [
+          232.5,
+          465.0207052230835
+        ],
+        [
+          52.5,
+          465.0207052230835
+        ]
+      ]
+    },
+    {
+      "title": "Vorticity Confinement\n3",
+      "heading_level": null,
+      "page_id": 1,
+      "polygon": [
+        [
+          317.25,
+          483.75
+        ],
+        [
+          460.92593121528625,
+          483.3676586151123
+        ],
+        [
+          460.5,
+          495.64427947998047
+        ],
+        [
+          316.44559693336487,
+          497.19115447998047
+        ]
+      ]
+    },
+    {
+      "title": "Implementation\n4",
+      "heading_level": null,
+      "page_id": 2,
+      "polygon": [
+        [
+          52.5,
+          702.75
+        ],
+        [
+          161.25,
+          703.7854499816895
+        ],
+        [
+          161.25,
+          714.8502702713013
+        ],
+        [
+          52.5,
+          716.3971452713013
+        ]
+      ]
+    },
+    {
+      "title": "Rendering\n5",
+      "heading_level": null,
+      "page_id": 3,
+      "polygon": [
+        [
+          52.5,
+          323.25
+        ],
+        [
+          132.35894519090652,
+          323.25
+        ],
+        [
+          132.0,
+          336.11344814300537
+        ],
+        [
+          52.5,
+          336.11344814300537
+        ]
+      ]
+    },
+    {
+      "title": "5.1\nHardware-Based Renderer",
+      "heading_level": null,
+      "page_id": 3,
+      "polygon": [
+        [
+          52.5,
+          697.5
+        ],
+        [
+          203.25,
+          697.5
+        ],
+        [
+          203.25,
+          707.2229132652283
+        ],
+        [
+          52.5,
+          707.2229132652283
+        ]
+      ]
+    },
+    {
+      "title": "5.2 Photon Map Renderer",
+      "heading_level": null,
+      "page_id": 3,
+      "polygon": [
+        [
+          316.5,
+          296.25
+        ],
+        [
+          445.5,
+          296.25
+        ],
+        [
+          445.5,
+          305.68396496772766
+        ],
+        [
+          316.5,
+          307.23083996772766
+        ]
+      ]
+    },
+    {
+      "title": "Results\n6",
+      "heading_level": null,
+      "page_id": 5,
+      "polygon": [
+        [
+          52.5,
+          321.75
+        ],
+        [
+          116.25,
+          321.75
+        ],
+        [
+          116.25,
+          333.4040801525116
+        ],
+        [
+          52.5,
+          333.4040801525116
+        ]
+      ]
+    },
+    {
+      "title": "7\nConclusions",
+      "heading_level": null,
+      "page_id": 5,
+      "polygon": [
+        [
+          52.5,
+          662.7202806472778
+        ],
+        [
+          144.75,
+          662.7202806472778
+        ],
+        [
+          144.75,
+          674.7617168426514
+        ],
+        [
+          52.5,
+          674.7617168426514
+        ]
+      ]
+    },
+    {
+      "title": "Acknowledgements\n8",
+      "heading_level": null,
+      "page_id": 5,
+      "polygon": [
+        [
+          317.25,
+          158.25
+        ],
+        [
+          449.25,
+          158.17350375652313
+        ],
+        [
+          449.25,
+          169.80173814296722
+        ],
+        [
+          316.79582262039185,
+          171.34861314296722
+        ]
+      ]
+    },
+    {
+      "title": "Discretization\n\u0391",
+      "heading_level": null,
+      "page_id": 5,
+      "polygon": [
+        [
+          316.92542910575867,
+          259.5
+        ],
+        [
+          417.0,
+          259.5
+        ],
+        [
+          417.0,
+          271.9399688243866
+        ],
+        [
+          315.73011660575867,
+          273.4868438243866
+        ]
+      ]
+    },
+    {
+      "title": "\u0392\nMonotonic Cubic Interpolation",
+      "heading_level": null,
+      "page_id": 6,
+      "polygon": [
+        [
+          53.16640055179596,
+          356.126544713974
+        ],
+        [
+          246.91875779628754,
+          356.126544713974
+        ],
+        [
+          246.91875779628754,
+          367.11607003211975
+        ],
+        [
+          53.16640055179596,
+          367.11607003211975
+        ]
+      ]
+    },
+    {
+      "title": "References",
+      "heading_level": null,
+      "page_id": 6,
+      "polygon": [
+        [
+          317.25,
+          76.5
+        ],
+        [
+          382.5,
+          76.05012810230255
+        ],
+        [
+          382.5,
+          87.51840198040009
+        ],
+        [
+          317.25,
+          89.06527698040009
+        ]
+      ]
+    }
+  ],
+  "page_stats": [
+    {
+      "page_id": 0,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          205
+        ],
+        [
+          "Line",
+          104
+        ],
+        [
+          "Text",
+          16
+        ],
+        [
+          "SectionHeader",
+          5
+        ],
+        [
+          "Footnote",
+          3
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 1,
+      "text_extraction_method": "surya",
+      "block_counts": [
+        [
+          "Span",
+          140
+        ],
+        [
+          "Line",
+          108
+        ],
+        [
+          "Text",
+          13
+        ],
+        [
+          "Equation",
+          8
+        ],
+        [
+          "TextInlineMath",
+          3
+        ],
+        [
+          "SectionHeader",
+          2
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 2,
+      "text_extraction_method": "surya",
+      "block_counts": [
+        [
+          "Span",
+          99
+        ],
+        [
+          "Line",
+          89
+        ],
+        [
+          "Text",
+          11
+        ],
+        [
+          "Equation",
+          3
+        ],
+        [
+          "Figure",
+          2
+        ],
+        [
+          "Caption",
+          2
+        ],
+        [
+          "FigureGroup",
+          2
+        ],
+        [
+          "SectionHeader",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 3,
+      "text_extraction_method": "surya",
+      "block_counts": [
+        [
+          "Span",
+          170
+        ],
+        [
+          "Line",
+          111
+        ],
+        [
+          "Text",
+          10
+        ],
+        [
+          "TextInlineMath",
+          7
+        ],
+        [
+          "Equation",
+          5
+        ],
+        [
+          "SectionHeader",
+          3
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 4,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          313
+        ],
+        [
+          "Line",
+          15
+        ],
+        [
+          "Picture",
+          5
+        ],
+        [
+          "Caption",
+          5
+        ],
+        [
+          "PictureGroup",
+          5
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 5,
+      "text_extraction_method": "surya",
+      "block_counts": [
+        [
+          "Line",
+          83
+        ],
+        [
+          "Span",
+          81
+        ],
+        [
+          "Text",
+          11
+        ],
+        [
+          "Equation",
+          6
+        ],
+        [
+          "SectionHeader",
+          4
+        ],
+        [
+          "TextInlineMath",
+          2
+        ],
+        [
+          "Picture",
+          1
+        ],
+        [
+          "Caption",
+          1
+        ],
+        [
+          "PictureGroup",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 6,
+      "text_extraction_method": "surya",
+      "block_counts": [
+        [
+          "Span",
+          101
+        ],
+        [
+          "Line",
+          85
+        ],
+        [
+          "ListItem",
+          16
+        ],
+        [
+          "Equation",
+          5
+        ],
+        [
+          "Text",
+          4
+        ],
+        [
+          "TextInlineMath",
+          2
+        ],
+        [
+          "SectionHeader",
+          2
+        ],
+        [
+          "Figure",
+          1
+        ],
+        [
+          "Caption",
+          1
+        ],
+        [
+          "FigureGroup",
+          1
+        ],
+        [
+          "ListGroup",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 7,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          50
+        ],
+        [
+          "Line",
+          20
+        ],
+        [
+          "ListItem",
+          6
+        ],
+        [
+          "ListGroup",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    }
+  ],
+  "debug_data_path": "debug_data/Visual Simulation of Smoke"
+}

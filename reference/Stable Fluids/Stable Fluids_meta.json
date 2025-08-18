@@ -1,0 +1,766 @@
+{
+  "table_of_contents": [
+    {
+      "title": "Stable Fluids",
+      "heading_level": null,
+      "page_id": 0,
+      "polygon": [
+        [
+          261.47998046875,
+          67.129150390625
+        ],
+        [
+          350.4288024902344,
+          67.129150390625
+        ],
+        [
+          350.4288024902344,
+          82.59614664316177
+        ],
+        [
+          261.47998046875,
+          82.59614664316177
+        ]
+      ]
+    },
+    {
+      "title": "Abstract",
+      "heading_level": null,
+      "page_id": 0,
+      "polygon": [
+        [
+          52.25040954351425,
+          152.71178591251373
+        ],
+        [
+          102.8062224984169,
+          152.71178591251373
+        ],
+        [
+          102.8062224984169,
+          165.9208606481552
+        ],
+        [
+          52.25040954351425,
+          165.9208606481552
+        ]
+      ]
+    },
+    {
+      "title": "1 Introduction",
+      "heading_level": null,
+      "page_id": 0,
+      "polygon": [
+        [
+          53.94835755228996,
+          424.5110168457031
+        ],
+        [
+          143.1761165857315,
+          424.5110168457031
+        ],
+        [
+          143.1761165857315,
+          436.8315896987915
+        ],
+        [
+          53.94835755228996,
+          436.8315896987915
+        ]
+      ]
+    },
+    {
+      "title": "Stable Navier-Stokes\n2",
+      "heading_level": null,
+      "page_id": 1,
+      "polygon": [
+        [
+          52.5,
+          576.75
+        ],
+        [
+          190.5,
+          576.75
+        ],
+        [
+          190.5,
+          588.6591553688049
+        ],
+        [
+          52.5,
+          588.6591553688049
+        ]
+      ]
+    },
+    {
+      "title": "2.1 Basic Equations",
+      "heading_level": null,
+      "page_id": 1,
+      "polygon": [
+        [
+          52.5,
+          599.25
+        ],
+        [
+          156.0,
+          599.25
+        ],
+        [
+          156.0,
+          609.8926205635071
+        ],
+        [
+          52.5,
+          611.4394955635071
+        ]
+      ]
+    },
+    {
+      "title": "2.2 Method of Solution",
+      "heading_level": null,
+      "page_id": 2,
+      "polygon": [
+        [
+          52.5,
+          406.5
+        ],
+        [
+          168.75,
+          406.5
+        ],
+        [
+          168.75,
+          417.1701135635376
+        ],
+        [
+          52.5,
+          417.1701135635376
+        ]
+      ]
+    },
+    {
+      "title": "Periodic Boundaries and the FFT\n23",
+      "heading_level": null,
+      "page_id": 3,
+      "polygon": [
+        [
+          52.5,
+          218.25
+        ],
+        [
+          234.0,
+          218.25
+        ],
+        [
+          234.0,
+          227.83455848693848
+        ],
+        [
+          52.5,
+          227.83455848693848
+        ]
+      ]
+    },
+    {
+      "title": "2.4 Moving Substances through the Fluid",
+      "heading_level": null,
+      "page_id": 3,
+      "polygon": [
+        [
+          52.5,
+          648.75
+        ],
+        [
+          256.5,
+          648.75
+        ],
+        [
+          256.5,
+          658.5
+        ],
+        [
+          52.5,
+          658.5
+        ]
+      ]
+    },
+    {
+      "title": "Our Solver\n3",
+      "heading_level": null,
+      "page_id": 3,
+      "polygon": [
+        [
+          317.25,
+          448.0270314216614
+        ],
+        [
+          398.25,
+          448.0270314216614
+        ],
+        [
+          398.25,
+          460.58783769607544
+        ],
+        [
+          317.25,
+          460.58783769607544
+        ]
+      ]
+    },
+    {
+      "title": "3.1\nSetup",
+      "heading_level": null,
+      "page_id": 3,
+      "polygon": [
+        [
+          317.25,
+          470.25
+        ],
+        [
+          369.75,
+          470.25
+        ],
+        [
+          369.75,
+          481.07368755340576
+        ],
+        [
+          317.25,
+          481.07368755340576
+        ]
+      ]
+    },
+    {
+      "title": "3.2 The Simulator",
+      "heading_level": null,
+      "page_id": 4,
+      "polygon": [
+        [
+          54.0,
+          414.84918212890625
+        ],
+        [
+          144.30261325836182,
+          414.84918212890625
+        ],
+        [
+          144.0299835205078,
+          425.09789514541626
+        ],
+        [
+          53.09894809126854,
+          425.09789514541626
+        ]
+      ]
+    },
+    {
+      "title": "4 Results",
+      "heading_level": null,
+      "page_id": 5,
+      "polygon": [
+        [
+          52.5,
+          58.5
+        ],
+        [
+          116.25,
+          58.5
+        ],
+        [
+          116.25,
+          70.41650640964508
+        ],
+        [
+          52.5,
+          70.41650640964508
+        ]
+      ]
+    },
+    {
+      "title": "5\nConclusions",
+      "heading_level": null,
+      "page_id": 5,
+      "polygon": [
+        [
+          52.5,
+          473.25
+        ],
+        [
+          144.75,
+          473.25
+        ],
+        [
+          144.75,
+          485.76180267333984
+        ],
+        [
+          52.5,
+          485.76180267333984
+        ]
+      ]
+    },
+    {
+      "title": "Acknowledgments",
+      "heading_level": null,
+      "page_id": 5,
+      "polygon": [
+        [
+          317.25,
+          58.5
+        ],
+        [
+          423.75,
+          58.5
+        ],
+        [
+          423.75,
+          70.74067014455795
+        ],
+        [
+          317.25,
+          70.74067014455795
+        ]
+      ]
+    },
+    {
+      "title": "Method of Characteristics\n\u0391",
+      "heading_level": null,
+      "page_id": 5,
+      "polygon": [
+        [
+          317.25,
+          146.25
+        ],
+        [
+          485.25,
+          146.88288116455078
+        ],
+        [
+          485.25,
+          159.42697620391846
+        ],
+        [
+          317.25,
+          159.42697620391846
+        ]
+      ]
+    },
+    {
+      "title": "FISHPAK Routines\n\u0412",
+      "heading_level": null,
+      "page_id": 5,
+      "polygon": [
+        [
+          316.46088123321533,
+          501.75
+        ],
+        [
+          444.75,
+          501.48646116256714
+        ],
+        [
+          444.75,
+          512.7903370857239
+        ],
+        [
+          316.46088123321533,
+          514.3372120857239
+        ]
+      ]
+    },
+    {
+      "title": "References",
+      "heading_level": null,
+      "page_id": 6,
+      "polygon": [
+        [
+          54.0,
+          263.71099853515625
+        ],
+        [
+          118.10398864746094,
+          263.71099853515625
+        ],
+        [
+          118.10398864746094,
+          275.71099853515625
+        ],
+        [
+          53.233214646577835,
+          276.44603061676025
+        ]
+      ]
+    }
+  ],
+  "page_stats": [
+    {
+      "page_id": 0,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          204
+        ],
+        [
+          "Line",
+          109
+        ],
+        [
+          "Text",
+          11
+        ],
+        [
+          "SectionHeader",
+          3
+        ],
+        [
+          "Footnote",
+          2
+        ],
+        [
+          "Picture",
+          1
+        ],
+        [
+          "PageFooter",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 1,
+      "text_extraction_method": "surya",
+      "block_counts": [
+        [
+          "Span",
+          179
+        ],
+        [
+          "Line",
+          119
+        ],
+        [
+          "Text",
+          6
+        ],
+        [
+          "Equation",
+          6
+        ],
+        [
+          "TextInlineMath",
+          5
+        ],
+        [
+          "SectionHeader",
+          2
+        ],
+        [
+          "PageFooter",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 2,
+      "text_extraction_method": "surya",
+      "block_counts": [
+        [
+          "Span",
+          141
+        ],
+        [
+          "Line",
+          92
+        ],
+        [
+          "Text",
+          8
+        ],
+        [
+          "Equation",
+          6
+        ],
+        [
+          "TextInlineMath",
+          4
+        ],
+        [
+          "Figure",
+          2
+        ],
+        [
+          "Caption",
+          2
+        ],
+        [
+          "FigureGroup",
+          2
+        ],
+        [
+          "SectionHeader",
+          1
+        ],
+        [
+          "PageFooter",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 3,
+      "text_extraction_method": "surya",
+      "block_counts": [
+        [
+          "Span",
+          143
+        ],
+        [
+          "Line",
+          115
+        ],
+        [
+          "Text",
+          10
+        ],
+        [
+          "SectionHeader",
+          4
+        ],
+        [
+          "Equation",
+          4
+        ],
+        [
+          "TextInlineMath",
+          3
+        ],
+        [
+          "Figure",
+          1
+        ],
+        [
+          "Caption",
+          1
+        ],
+        [
+          "PageFooter",
+          1
+        ],
+        [
+          "FigureGroup",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 4,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          331
+        ],
+        [
+          "Line",
+          120
+        ],
+        [
+          "Text",
+          9
+        ],
+        [
+          "Code",
+          4
+        ],
+        [
+          "SectionHeader",
+          1
+        ],
+        [
+          "Footnote",
+          1
+        ],
+        [
+          "PageFooter",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 5,
+      "text_extraction_method": "surya",
+      "block_counts": [
+        [
+          "Span",
+          166
+        ],
+        [
+          "Line",
+          109
+        ],
+        [
+          "Text",
+          11
+        ],
+        [
+          "SectionHeader",
+          5
+        ],
+        [
+          "Equation",
+          4
+        ],
+        [
+          "TextInlineMath",
+          4
+        ],
+        [
+          "Code",
+          3
+        ],
+        [
+          "PageFooter",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 6,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          243
+        ],
+        [
+          "Line",
+          94
+        ],
+        [
+          "ListItem",
+          24
+        ],
+        [
+          "Text",
+          3
+        ],
+        [
+          "Equation",
+          2
+        ],
+        [
+          "ListGroup",
+          2
+        ],
+        [
+          "SectionHeader",
+          1
+        ],
+        [
+          "PageFooter",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 7,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          17
+        ],
+        [
+          "Picture",
+          8
+        ],
+        [
+          "Line",
+          8
+        ],
+        [
+          "Figure",
+          1
+        ],
+        [
+          "Text",
+          1
+        ],
+        [
+          "Caption",
+          1
+        ],
+        [
+          "PageFooter",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    }
+  ],
+  "debug_data_path": "debug_data/Stable Fluids"
+}
